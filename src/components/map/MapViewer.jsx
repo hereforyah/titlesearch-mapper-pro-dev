@@ -1,60 +1,42 @@
-import React from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import { useAppSettings } from '../../context/AppSettingsContext';
-import ParcelLayer from './ParcelLayer';
-import ControlPanel from './ControlPanel';
-import OverlayManager from './OverlayManager';
-import ParcelRenderer from './ParcelRenderer';
-import ExportPanel from '../features/ExportPanel';
-import MultiParcelOverlay from '../features/MultiParcelOverlay';
-import IntersectionManager from '../features/IntersectionManager';
+import React, { useEffect } from "react";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import floridaCountyBounds from "../../utils/floridaCountyBounds";
 
-// Fix for Leaflet marker icons in React
-import L from 'leaflet';
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
-let DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41]
-});
+function MapUpdater({ selectedCounty }) {
+  const map = useMap();
 
-L.Marker.prototype.options.icon = DefaultIcon;
-
-const MapViewer = () => {
-  const { mapSettings } = useAppSettings();
-  const mapRef = React.useRef(null);
+  useEffect(() => {
+    console.log("Selected County:", selectedCounty); // ✅ Add this
+    if (selectedCounty && floridaCountyBounds[selectedCounty]) {
+      const bounds = floridaCountyBounds[selectedCounty];
+      console.log("Zooming to bounds:", bounds);
+      map.fitBounds(bounds);
+    } else {
+      console.warn("County not found in bounds data:", selectedCounty);
+    }
+  }, [selectedCounty, map]);
   
-  // Default center and zoom if not provided in settings
-  const center = mapSettings.center || [40.7128, -74.0060]; // Default to NYC
-  const zoom = mapSettings.zoom || 13;
-  
+
+  return null;
+}
+
+
+function MapViewer({ selectedCounty }) {
   return (
-    <div className="w-full h-full relative">
-      <MapContainer
-        center={center}
-        zoom={zoom}
-        style={{ height: '100%', width: '100%' }}
-        ref={mapRef}
-        whenCreated={(map) => { mapRef.current = map; }}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <ParcelLayer />
-        <ControlPanel />
-        <ParcelRenderer />
-        <IntersectionManager />
-      </MapContainer>
-      <OverlayManager mapRef={mapRef} />
-      <ExportPanel mapRef={mapRef} />
-      <MultiParcelOverlay mapRef={mapRef} />
-    </div>
+    <MapContainer
+      center={[27.994402, -81.760254]} // Center of Florida
+      zoom={6}
+      style={{ height: "100vh", width: "100%" }}
+    >
+      <TileLayer
+        attribution='&copy; OpenStreetMap contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <MapUpdater selectedCounty={selectedCounty} />
+    </MapContainer>
   );
-};
+}
 
 export default MapViewer;
