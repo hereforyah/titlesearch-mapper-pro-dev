@@ -8,13 +8,11 @@ import "./assets/styles/tailwind.css";
 
 function App() {
   const [selectedCounty, setSelectedCounty] = useState(() => {
-    // Retrieve from localStorage on first load
     return localStorage.getItem("selectedCounty") || "";
   });
 
   useEffect(() => {
     if (selectedCounty) {
-      console.log("💾 Saving county to localStorage:", selectedCounty);
       localStorage.setItem("selectedCounty", selectedCounty);
     }
   }, [selectedCounty]);
