@@ -1,27 +1,15 @@
-import React, { useState } from 'react';
+import React from "react";
+import floridaCounties from "../utils/floridaCounties";
 
-const floridaCounties = [
-  'Alachua', 'Baker', 'Bay', 'Bradford', 'Brevard', 'Broward',
-  'Calhoun', 'Charlotte', 'Citrus', 'Clay', 'Collier', 'Columbia',
-  'DeSoto', 'Dixie', 'Duval', 'Escambia', 'Flagler', 'Franklin',
-  'Gadsden', 'Gilchrist', 'Glades', 'Gulf', 'Hamilton', 'Hardee',
-  'Hendry', 'Hernando', 'Highlands', 'Hillsborough', 'Holmes', 'Indian River',
-  'Jackson', 'Jefferson', 'Lafayette', 'Lake', 'Lee', 'Leon',
-  'Levy', 'Liberty', 'Madison', 'Manatee', 'Marion', 'Martin',
-  'Miami-Dade', 'Monroe', 'Nassau', 'Okaloosa', 'Okeechobee', 'Orange',
-  'Osceola', 'Palm Beach', 'Pasco', 'Pinellas', 'Polk', 'Putnam',
-  'Santa Rosa', 'Sarasota', 'Seminole', 'St. Johns', 'St. Lucie', 'Sumter',
-  'Suwannee', 'Taylor', 'Union', 'Volusia', 'Wakulla', 'Walton',
-  'Washington'
-];
-
-const CountySelector = ({ selectedCounty, onCountyChange }) => {
-  const [county, setCounty] = useState(selectedCounty || '');
-
+function CountySelector({ onCountyChange }) {
   const handleChange = (event) => {
-    const newCounty = event.target.value;
-    setCounty(newCounty);
-    onCountyChange(newCounty); // ✅ Pass to parent component
+    const selected = event.target.value;
+    console.log("✅ Selected County:", selected);
+    if (onCountyChange) {
+      onCountyChange(selected);
+    } else {
+      console.warn("🚨 onCountyChange is not a function!");
+    }
   };
 
   return (
@@ -32,7 +20,6 @@ const CountySelector = ({ selectedCounty, onCountyChange }) => {
       <select
         id="county"
         name="county"
-        value={county}
         onChange={handleChange}
         className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
       >
@@ -45,6 +32,6 @@ const CountySelector = ({ selectedCounty, onCountyChange }) => {
       </select>
     </div>
   );
-};
+}
 
 export default CountySelector;
