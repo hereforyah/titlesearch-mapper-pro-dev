@@ -10,6 +10,10 @@ import * as turf from '@turf/turf';
  * @param {Object} startPoint - Optional starting point {lat: number, lng: number}
  * @returns {Object} - Parsed result with coordinates, validity, area, perimeter, and errors
  */
+
+console.log("🚀 Running parseMetesAndBounds...");
+
+
 export const parseMetesAndBounds = (description, startPoint = { lat: 0, lng: 0 }) => {
   try {
     // Check for PLSS notation at the beginning
@@ -18,8 +22,14 @@ export const parseMetesAndBounds = (description, startPoint = { lat: 0, lng: 0 }
     // Normalize the description
     const normalizedDescription = normalizeDescription(description);
     
+    console.log("🧼 Normalized description:", normalizedDescription);
+
     // Extract individual calls
     const { calls, errors: parseErrors } = extractCalls(normalizedDescription);
+
+    console.log("📜 Extracted Calls:", calls);
+    console.log("🐞 Parse Errors:", parseErrors);
+
     
     if (calls.length === 0) {
       return {
@@ -33,6 +43,8 @@ export const parseMetesAndBounds = (description, startPoint = { lat: 0, lng: 0 }
     
     // Calculate coordinates
     const { coordinates, segments } = calculateCoordinates(calls, startPoint);
+    console.log("📍 Calculated coordinates:", coordinates);
+
     
     // Validate the parcel and check for closure
     const validation = validateParcel(coordinates);
@@ -108,7 +120,7 @@ const normalizeDescription = (description) => {
   let normalized = description.replace(/^\s*\/[NESW]{1,2},\d+,\d+[NESW],\d+[NESW]/i, '');
   
   // Remove extra whitespace
-  normalized = normalized.trim().replace(/\s+/g, ' ');
+  normalized = normalized.trim().replace(/[ \t]+/g, ' ');
   
   // Convert to lowercase for case-insensitive processing
   normalized = normalized.toLowerCase();
@@ -133,6 +145,9 @@ const extractCalls = (description) => {
   const calls = [];
   const errors = [];
   const lines = description.split(/[;\n]/).filter(line => line.trim());
+
+  console.log("🧾 Raw line count:", lines.length);
+  console.log("🔍 Raw lines:", lines);
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -331,6 +346,8 @@ const calculateCoordinates = (calls, startPoint) => {
   const segments = [];
   let currentPoint = { ...startPoint };
   
+  console.log("🧪 Creating start point with lat/lng:", currentPoint.lat, currentPoint.lng);
+
   // Convert to GeoJSON point for Turf.js
   let currentGeoPoint = turf.point([currentPoint.lng, currentPoint.lat]);
   
